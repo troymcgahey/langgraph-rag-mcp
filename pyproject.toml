@@ -15,5 +15,8 @@ dependencies = [
     "mcp>=1.28.0",
     "python-dotenv>=1.2.2",
 ]
-[tool.setuptools]
-package-dir = {"" = "src"}
+[tool.uv]
+package = true
+
+[tool.setuptools.packages.find]
+where = ["src"]

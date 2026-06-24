@@ -2,15 +2,15 @@ from pathlib import Path
 
 from langchain_chroma import Chroma
 from langchain_core.documents import Document
-from langchain_openia import OpenAIEmbeddings
+from langchain_openai import OpenAIEmbeddings
 
 CHROMA_DIR = "chroma_db"
 DOCS_DIR = Path("docs")
 
 def load_documents() -> list[Document]:
-    documents = {}
+    documents = []
     
-    for path in DOCS_DIR.glob("*.txt):
+    for path in DOCS_DIR.glob("*.txt"):
         text = path.read_text()
         documents.append(
             Document(
