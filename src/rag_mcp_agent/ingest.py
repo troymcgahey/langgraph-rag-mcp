@@ -2,7 +2,7 @@ from pathlib import Path
 
 from langchain_chroma import Chroma
 from langchain_core.documents import Document
-from langchain_openai import OpenAIEmbeddings
+from langchain_ollama import OllamaEmbeddings
 
 CHROMA_DIR = "chroma_db"
 DOCS_DIR = Path("docs")
@@ -27,11 +27,13 @@ def main() -> None:
     if not documents:
         print("No documents found.")
         return
-    
-    embeddings = OpenAIEmbeddings()
+
+    embeddings = OllamaEmbeddings(
+        model="nomic-embed-text"
+    )
 
     Chroma.from_documents(
-        document=documents,
+        documents=documents,
         embedding=embeddings,
         persist_directory=CHROMA_DIR,
         collection_name="travel_docs",
