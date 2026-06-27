@@ -56,9 +56,11 @@ def build_graph():
     graph_builder = StateGraph(AgentState)
 
     graph_builder.add_node("retrieve_docs", retrieve_docs)
+    graph_builder.add_node("generate_answer", generate_answer)
 
     graph_builder.add_edge(START, "retrieve_docs")
-    graph_builder.add_edge("retrieve_docs", END)
+    graph_builder.add_edge("retrieve_docs", "generate_answer")
+    graph_builder.add_edge("generate_answer", END)
 
 
     return graph_builder.compile()
