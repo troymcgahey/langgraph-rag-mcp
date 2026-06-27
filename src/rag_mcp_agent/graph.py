@@ -11,6 +11,7 @@ COLLECTION_NAME = "travel_docs"
 class AgentState(TypedDict):
     question: str
     documents: list[Document]
+    answer: str
 
 def retrieve_docs(state: AgentState) -> AgentState:
     embeddings = OllamaEmbeddings(model="nomic-embed-text")
@@ -29,6 +30,26 @@ def retrieve_docs(state: AgentState) -> AgentState:
     return {
         "question": state["question"],
         "documents": documents,
+    }
+
+def generate_answer(state: AgentState) -> AgentState:
+    context="\n\n".join(
+        document.page_content for document in state["documents"]
+    )
+
+    answer = f"""
+Based on the retrieved documents:
+
+Question: {state["question"]}
+
+Context:
+{context}
+""""
+
+    return {
+        "question": state["question"],
+        "documents": state["documents"],
+        "answer": answer,
     }
 
 def build_graph():
