@@ -5,7 +5,7 @@ from langchain_chroma import Chroma
 from langchain_ollama import OllamaEmbeddings
 from langchain_core.documents import Document
 
-CHROMA_DIR = "chrome_db"
+CHROMA_DIR = "chroma_db"
 COLLECTION_NAME = "travel_docs"
 
 class AgentState(TypedDict):
@@ -18,7 +18,7 @@ def retrieve_docs(state: AgentState) -> AgentState:
     vector_store = Chroma(
         persist_directory=CHROMA_DIR,
         collection_name=COLLECTION_NAME,
-        embeddings_function=embeddings,
+        embedding_function=embeddings,
     )
 
     documents = vector_store.similarity_search(
@@ -40,4 +40,4 @@ def build_graph():
     graph_builder.add_edge("retrieve_docs", END)
 
 
-    return grpah_builder.compile()
+    return graph_builder.compile()

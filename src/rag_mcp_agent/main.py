@@ -15,12 +15,10 @@ def main() -> None:
     print(result["question"])
 
     print("\nRetrieved Documents:")
-    for index, document in encumerate(result["documents"], start=1):
-        print(f"\nResult {index}"}
+    for index, document in enumerate(result["documents"], start=1):
+        print(f"\nResult {index}")
         print("Source:", document.metadata.get("source"))
         print("Content:", document.page_content)
-        
-
 
 if __name__ == "__main__":
     main()
