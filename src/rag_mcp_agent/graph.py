@@ -44,7 +44,7 @@ Question: {state["question"]}
 
 Context:
 {context}
-""""
+"""
 
     return {
         "question": state["question"],

@@ -8,6 +8,7 @@ def main() -> None:
         {
             "question": "What city is good for visiting Pompeii?",
             "documents": [],
+            "answer": "",
         }
     )
 
@@ -19,6 +20,9 @@ def main() -> None:
         print(f"\nResult {index}")
         print("Source:", document.metadata.get("source"))
         print("Content:", document.page_content)
+
+    print("\nAnswer")
+    print(result["answer"])
 
 if __name__ == "__main__":
     main()
