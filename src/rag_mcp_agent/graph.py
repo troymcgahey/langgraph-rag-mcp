@@ -2,7 +2,7 @@ from typing import TypedDict
 
 from langgraph.graph import StateGraph, START, END
 from langchain_chroma import Chroma
-from langchain_ollama import OllamaEmbeddings
+from langchain_ollama import OllamaEmbeddings, ChatOllama
 from langchain_core.documents import Document
 
 CHROMA_DIR = "chroma_db"
@@ -37,8 +37,10 @@ def generate_answer(state: AgentState) -> AgentState:
         document.page_content for document in state["documents"]
     )
 
-    answer = f"""
-Based on the retrieved documents:
+    prompt = f"""
+You are a helpful travel assistant.
+
+Answer the user's question using only the context below.
 
 Question: {state["question"]}
 
@@ -46,10 +48,14 @@ Context:
 {context}
 """
 
+    llm = ChatOllama(model="llama3.2")
+
+    response = llm.invoke(prompt)
+
     return {
         "question": state["question"],
         "documents": state["documents"],
-        "answer": answer,
+        "answer": response.content,
     }
 
 def build_graph():
