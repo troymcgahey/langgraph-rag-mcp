@@ -6,7 +6,7 @@ from langgraph.graph import StateGraph, START, END
 from langchain_chroma import Chroma
 from langchain_ollama import OllamaEmbeddings, ChatOllama
 from langchain_core.documents import Document
-from ;angchain_mcp_adapters.client import MultiServerMCPClient
+from langchain_mcp_adapters.client import MultiServerMCPClient
 
 CHROMA_DIR = "chroma_db"
 COLLECTION_NAME = "travel_docs"
@@ -14,7 +14,7 @@ COLLECTION_NAME = "travel_docs"
 class AgentState(TypedDict):
     question: str
     documents: list[Document]
-    mcp_result: str,
+    mcp_result: str
     answer: str
 
 def retrieve_docs(state: AgentState) -> AgentState:
@@ -53,7 +53,7 @@ Retreived context:
 {context}
 
 MCP tool result:
-{state["mcp_result"]
+{state["mcp_result"]}
 """
 
     llm = ChatOllama(model="llama3.2")
@@ -74,7 +74,7 @@ async def call_mcp_tool(state: AgentState) -> AgentState:
                 "args": [
                     "run",
                     "python",
-                    =-m",
+                    "-m",
                     "rag_mcp_agent.mcp_server",
                 ],
                 "transport": "stdio",
@@ -90,7 +90,7 @@ async def call_mcp_tool(state: AgentState) -> AgentState:
 
     city = "naples" if "pompeii" in state["question"].lower() else "paris"
 
-    result = await get_travel_tip.ainvoke({"city"}: city})
+    result = await get_travel_tip.ainvoke({"city": city})
 
     return {
         **state,
@@ -101,7 +101,7 @@ def build_graph():
     graph_builder = StateGraph(AgentState)
 
     graph_builder.add_node("retrieve_docs", retrieve_docs)
-    grpah_builder.add_node("call_mcp_tool", call_mcp_tool)
+    graph_builder.add_node("call_mcp_tool", call_mcp_tool)
     graph_builder.add_node("generate_answer", generate_answer)
 
     graph_builder.add_edge(START, "retrieve_docs")

@@ -6,7 +6,7 @@ async def main() -> None:
     graph = build_graph()
 
 
-    result = graph.invoke(
+    result = await graph.ainvoke(
         {
             "question": "What city is good for visiting museums?",
             "documents": [],
