@@ -6,7 +6,7 @@ def main() -> None:
 
     result = graph.invoke(
         {
-            "question": "What city is good for visiting Pompeii?",
+            "question": "What city is good for visiting museums?",
             "documents": [],
             "answer": "",
         }
