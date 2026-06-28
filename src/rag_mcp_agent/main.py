@@ -1,6 +1,8 @@
+import asyncio
+
 from rag_mcp_agent.graph import build_graph
 
-def main() -> None:
+async def main() -> None:
     graph = build_graph()
 
 
@@ -8,6 +10,7 @@ def main() -> None:
         {
             "question": "What city is good for visiting museums?",
             "documents": [],
+            "mcp_result": "",
             "answer": "",
         }
     )
@@ -25,4 +28,4 @@ def main() -> None:
     print(result["answer"])
 
 if __name__ == "__main__":
-    main()
+    asyncio.run(main())

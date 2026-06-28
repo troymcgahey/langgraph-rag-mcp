@@ -44,12 +44,16 @@ def generate_answer(state: AgentState) -> AgentState:
     prompt = f"""
 You are a helpful travel assistant.
 
-Answer the user's question using only the context below.
+Answer the user's question using only the retreived context and MCP tool result..
 
-Question: {state["question"]}
+Question: 
+{state["question"]}
 
-Context:
+Retreived context:
 {context}
+
+MCP tool result:
+{state["mcp_result"]
 """
 
     llm = ChatOllama(model="llama3.2")
