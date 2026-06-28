@@ -1,9 +1,12 @@
+import asyncio
+
 from typing import TypedDict
 
 from langgraph.graph import StateGraph, START, END
 from langchain_chroma import Chroma
 from langchain_ollama import OllamaEmbeddings, ChatOllama
 from langchain_core.documents import Document
+from ;angchain_mcp_adapters.client import MultiServerMCPClient
 
 CHROMA_DIR = "chroma_db"
 COLLECTION_NAME = "travel_docs"
@@ -11,6 +14,7 @@ COLLECTION_NAME = "travel_docs"
 class AgentState(TypedDict):
     question: str
     documents: list[Document]
+    mcp_result: str,
     answer: str
 
 def retrieve_docs(state: AgentState) -> AgentState:
@@ -58,14 +62,47 @@ Context:
         "answer": response.content,
     }
 
+async def call_mcp_tool(state: AgentState) -> AgentState:
+    client = MultiServerMCPClient(
+        {
+            "travel_tools": {
+                "command": "uv",
+                "args": [
+                    "run",
+                    "python",
+                    =-m",
+                    "rag_mcp_agent.mcp_server",
+                ],
+                "transport": "stdio",
+            }
+        }
+    )
+
+    tools = await client.get_tools()
+
+    get_travel_tip = next(
+        tool for tool in tools if tool.name == "get_travel_tip"
+    )
+
+    city = "naples" if "pompeii" in state["question"].lower() else "paris"
+
+    result = await get_travel_tip.ainvoke({"city"}: city})
+
+    return {
+        **state,
+        "mcp_result": result,
+    }
+
 def build_graph():
     graph_builder = StateGraph(AgentState)
 
     graph_builder.add_node("retrieve_docs", retrieve_docs)
+    grpah_builder.add_node("call_mcp_tool", call_mcp_tool)
     graph_builder.add_node("generate_answer", generate_answer)
 
     graph_builder.add_edge(START, "retrieve_docs")
-    graph_builder.add_edge("retrieve_docs", "generate_answer")
+    graph_builder.add_edge("retrieve_docs", "call_mcp_tool")
+    graph_builder.add_edge("call_mcp_tool", "generate_answer")
     graph_builder.add_edge("generate_answer", END)
 
 
