@@ -19,7 +19,7 @@ class AgentState(TypedDict):
     route: str
 
 def route_question(state: AgentState) -> AgentState:
-    question = state["question".lower()
+    question = state["question".lower()]
 
     if "tip" in question or "advice" in question:
         route = "mcp"
@@ -32,7 +32,7 @@ def route_question(state: AgentState) -> AgentState:
 
     return {
         **state,
-        "route", route.
+        "route": route,
     }
 
 def choose_next_node(state: AgentState) -> AgentState:
@@ -128,7 +128,7 @@ def build_graph():
 
     graph_builder.add_edge(START, "route_question")
 
-    grpah_builder.add_conditional_edges(
+    graph_builder.add_conditional_edges(
         "route_question",
         choose_next_node,
         {
