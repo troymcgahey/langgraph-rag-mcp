@@ -16,6 +16,27 @@ class AgentState(TypedDict):
     documents: list[Document]
     mcp_result: str
     answer: str
+    route: str
+
+def route_question(state: AgentState) -> AgentState:
+    question = state["question".lower()
+
+    if "tip" in question or "advice" in question:
+        route = "mcp"
+
+    elif "document" in question or "according to" in question:
+        route = "rag"
+
+    else:
+        route = "both"
+
+    return {
+        **state,
+        "route", route.
+    }
+
+def choose_next_node(state: AgentState) -> AgentState:
+    return state["route"]
 
 def retrieve_docs(state: AgentState) -> AgentState:
     embeddings = OllamaEmbeddings(model="nomic-embed-text")
@@ -100,13 +121,26 @@ async def call_mcp_tool(state: AgentState) -> AgentState:
 def build_graph():
     graph_builder = StateGraph(AgentState)
 
+    graph_builder.add_node("route_question", route_question)
     graph_builder.add_node("retrieve_docs", retrieve_docs)
     graph_builder.add_node("call_mcp_tool", call_mcp_tool)
     graph_builder.add_node("generate_answer", generate_answer)
 
-    graph_builder.add_edge(START, "retrieve_docs")
+    graph_builder.add_edge(START, "route_question")
+
+    grpah_builder.add_conditional_edges(
+        "route_question",
+        choose_next_node,
+        {
+            "rag": "retrieve_docs",
+            "mcp": "call_mcp_tool",
+            "both": "retrieve_docs",
+        },
+    )
+
     graph_builder.add_edge("retrieve_docs", "call_mcp_tool")
     graph_builder.add_edge("call_mcp_tool", "generate_answer")
+
     graph_builder.add_edge("generate_answer", END)
 
 

@@ -8,7 +8,7 @@ async def main() -> None:
 
     result = await graph.ainvoke(
         {
-            "question": "What city is good for visiting museums?",
+            "question": "What city is good for day train trips?",
             "documents": [],
             "mcp_result": "",
             "answer": "",
