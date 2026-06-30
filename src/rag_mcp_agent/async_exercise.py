@@ -1,4 +1,4 @@
-import acyncio
+import asyncio
 import time
 
 def now(start_time: float) -> str:
@@ -21,7 +21,7 @@ async def run_sequential() -> None:
     result_1 = await fake_network_call("task-1", 2, start_time)
     result_2 = await fake_network_call("task-2", 2, start_time)
 
-    print(f"{now(start_time)} | results: {result_1}, {result_2}
+    print(f"{now(start_time)} | results: {result_1}, {result_2}")
 
 async def run_concurrent() -> None:
     print("\n --- Concurrent async ---")
@@ -29,7 +29,7 @@ async def run_concurrent() -> None:
 
     result_1, result_2 = await asyncio.gather(
         fake_network_call("task-1", 2, start_time),
-        fake_network_call("task-2", 2, start_tume),
+        fake_network_call("task-2", 2, start_time),
     )
 
     print(f"{now(start_time)} | results: {result_1}, {result_2}")
