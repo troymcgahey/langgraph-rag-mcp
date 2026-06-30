@@ -16,27 +16,47 @@ class AgentState(TypedDict):
     documents: list[Document]
     mcp_result: str
     answer: str
+    use_rag: bool
+    use_mcp: bool
     route: str
 
-def route_question(state: AgentState) -> AgentState:
-    question = state["question".lower()]
+def plan_route(state: AgentState) -> AgentState:
+    question = state["question"].lower()
 
-    if "tip" in question or "advice" in question:
-        route = "mcp"
+    use_rag = (
+        "document" in question
+        or "according to" in question
+        or "pompeii" in question
+        or "paris" in question
+        or "naples" in question
+    )
 
-    elif "document" in question or "according to" in question:
-        route = "rag"
+    use_mcp = (
+        "tip" in question
+        or "advice" in question
+        or "recommend" in question
+    )
 
-    else:
-        route = "both"
+    if not use_rag and not use_mcp:
+        use_rag = True
 
     return {
         **state,
-        "route": route,
+        "use_rag": use_rag,
+        "use_mcp": use_mcp,
     }
 
-def choose_next_node(state: AgentState) -> AgentState:
-    return state["route"]
+def choose_route(state: AgentState) -> str:
+    if state["use_rag"] and state["use_mcp"]:
+        return "both"
+
+    if state["use_rag"]:
+        return "rag"
+
+    if state["use_mcp"]:
+        return "mcp"
+
+    return "rag"
 
 def retrieve_docs(state: AgentState) -> AgentState:
     embeddings = OllamaEmbeddings(model="nomic-embed-text")
@@ -121,16 +141,16 @@ async def call_mcp_tool(state: AgentState) -> AgentState:
 def build_graph():
     graph_builder = StateGraph(AgentState)
 
-    graph_builder.add_node("route_question", route_question)
+    graph_builder.add_node("plan_route", plan_route)
     graph_builder.add_node("retrieve_docs", retrieve_docs)
     graph_builder.add_node("call_mcp_tool", call_mcp_tool)
     graph_builder.add_node("generate_answer", generate_answer)
 
-    graph_builder.add_edge(START, "route_question")
+    graph_builder.add_edge(START, "plan_route")
 
     graph_builder.add_conditional_edges(
-        "route_question",
-        choose_next_node,
+        "plan_route",
+        choose_route,
         {
             "rag": "retrieve_docs",
             "mcp": "call_mcp_tool",
@@ -138,9 +158,15 @@ def build_graph():
         },
     )
 
-    graph_builder.add_edge("retrieve_docs", "call_mcp_tool")
-    graph_builder.add_edge("call_mcp_tool", "generate_answer")
+    graph_builder.add_conditional_edges(
+        "retrieve_docs",
+        lamdba state: "mcp" if state["use_mcp"] else "answer",
+        {
+            "mcp": "call_mcp_tool",
+            "answer": "generate_answer",
+        }
 
+    graph_builder.add_edge("call_mcp_tool", "generate_answer")
     graph_builder.add_edge("generate_answer", END)
 
 
