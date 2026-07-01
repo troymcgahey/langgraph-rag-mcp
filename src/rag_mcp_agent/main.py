@@ -8,23 +8,26 @@ async def main() -> None:
 
     result = await graph.ainvoke(
         {
-            "question": "What travel advice do you have for for visiting Pompeii?",
+            "question": " Based on documentation, what tip do you have when visiting Paris?",
             "documents": [],
             "mcp_result": "",
             "answer": "",
             "use_rag": False,
             "use_mcp": False,
+            "route": "",
         }
     )
 
     print("\nQuestion:")
     print(result["question"])
+    print("\n\nRoute:")
+    print(result["route"])
 
-    print("\nRetrieved Documents:")
-    for index, document in enumerate(result["documents"], start=1):
-        print(f"\nResult {index}")
-        print("Source:", document.metadata.get("source"))
-        print("Content:", document.page_content)
+#    print("\nRetrieved Documents:")
+#    for index, document in enumerate(result["documents"], start=1):
+#        print(f"\nResult {index}")
+#        print("Source:", document.metadata.get("source"))
+#        print("Content:", document.page_content)
 
     print("\nAnswer")
     print(result["answer"])

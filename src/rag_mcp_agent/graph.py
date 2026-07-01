@@ -26,9 +26,6 @@ def plan_route(state: AgentState) -> AgentState:
     use_rag = (
         "document" in question
         or "according to" in question
-        or "pompeii" in question
-        or "paris" in question
-        or "naples" in question
     )
 
     use_mcp = (
@@ -48,12 +45,15 @@ def plan_route(state: AgentState) -> AgentState:
 
 def choose_route(state: AgentState) -> str:
     if state["use_rag"] and state["use_mcp"]:
+        print("use_both")
         return "both"
 
     if state["use_rag"]:
+        print("use_rag")
         return "rag"
 
     if state["use_mcp"]:
+        print("use_mcp")
         return "mcp"
 
     return "rag"
@@ -160,11 +160,12 @@ def build_graph():
 
     graph_builder.add_conditional_edges(
         "retrieve_docs",
-        lamdba state: "mcp" if state["use_mcp"] else "answer",
+        lambda state: "mcp" if state["use_mcp"] else "answer",
         {
             "mcp": "call_mcp_tool",
             "answer": "generate_answer",
         }
+    )
 
     graph_builder.add_edge("call_mcp_tool", "generate_answer")
     graph_builder.add_edge("generate_answer", END)
