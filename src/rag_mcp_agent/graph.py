@@ -1,4 +1,5 @@
 import asyncio
+import json
 
 from typing import TypedDict
 
@@ -21,26 +22,47 @@ class AgentState(TypedDict):
     route: str
 
 def plan_route(state: AgentState) -> AgentState:
-    question = state["question"].lower()
+    llm = ChatOllama(model="llama3.2", temperature=0)
 
-    use_rag = (
-        "document" in question
-        or "according to" in question
-    )
+    prompt = f"""
+You are a routing planner for a travel assistant.
 
-    use_mcp = (
-        "tip" in question
-        or "advice" in question
-        or "recommend" in question
-    )
+The assistant has two resources:
 
-    if not use_rag and not use_mcp:
-        use_rag = True
+1. RAG/vector store:
+Use this when the user asks about information that may be in local travel documents.
+
+2. MCP travel tool:
+Use this when the user asks for a travel tip, advice, recommendations, or external tool-style action.
+
+Return only valid JSON with this shape:
+
+{{
+    "use_rag": true,
+    "use_mcp": false,
+    "reason": "short explanation"
+}}
+
+User question:
+{state["question"]}
+"""
+
+    response = llm.invoke(prompt)
+
+    try:
+        plan = json.loads(response.content)
+    except json.JSONDecodeError:
+        plan = {
+            "use_rag": True,
+            "use_mcp": False,
+            "reason": "Planner returned invalid JSON, so defaulting to RAG.",
+        }
 
     return {
         **state,
-        "use_rag": use_rag,
-        "use_mcp": use_mcp,
+        "use_rag": bool(plan.get("use_rag", True)),
+        "use_mcp": bool(plan.get("use_mcp", False)),
+        "plan_reason": plan.get("reason", ""),
     }
 
 def choose_route(state: AgentState) -> str:
