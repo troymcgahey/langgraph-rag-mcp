@@ -15,7 +15,7 @@ async def main() -> None:
             "use_rag": False,
             "use_mcp": False,
             "route": "",
-            "plan_reason", "",
+            "plan_reason": "",
         }
     )
 

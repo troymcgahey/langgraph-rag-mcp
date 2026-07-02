@@ -20,6 +20,7 @@ class AgentState(TypedDict):
     use_rag: bool
     use_mcp: bool
     route: str
+    plan_reason: str
 
 def plan_route(state: AgentState) -> AgentState:
     llm = ChatOllama(model="llama3.2", temperature=0)
