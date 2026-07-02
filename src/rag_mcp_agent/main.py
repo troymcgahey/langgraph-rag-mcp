@@ -8,18 +8,24 @@ async def main() -> None:
 
     result = await graph.ainvoke(
         {
-            "question": " Based on documentation, what tip do you have when visiting Paris?",
+            "question": "What travel advice do you have for viewing Pompeii from Naples?",
             "documents": [],
             "mcp_result": "",
             "answer": "",
             "use_rag": False,
             "use_mcp": False,
             "route": "",
+            "plan_reason", "",
         }
     )
 
     print("\nQuestion:")
     print(result["question"])
+
+    print("\nPlanner decision:")
+    print("use_rag:", result["use_rag"])
+    print("use_mcp:", result["use_mcp"])
+    print("reason:", result["plan_reason"])
     print("\n\nRoute:")
     print(result["route"])
 
