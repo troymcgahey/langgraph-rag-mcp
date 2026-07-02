@@ -5,10 +5,11 @@ from rag_mcp_agent.graph import build_graph
 async def main() -> None:
     graph = build_graph()
 
+    user_input = input("What travel advice are you inquiring about: ")
 
     result = await graph.ainvoke(
         {
-            "question": "What travel advice do you have for viewing Pompeii from Naples?",
+            "question": user_input,
             "documents": [],
             "mcp_result": "",
             "answer": "",
