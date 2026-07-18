@@ -17,6 +17,7 @@ async def main() -> None:
             "use_mcp": False,
             "route": "",
             "plan_reason": "",
+            "destination": "",
         }
     )
 

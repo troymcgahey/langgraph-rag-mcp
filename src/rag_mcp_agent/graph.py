@@ -21,6 +21,7 @@ class AgentState(TypedDict):
     use_mcp: bool
     route: str
     plan_reason: str
+    destination: str
 
 def plan_route(state: AgentState) -> AgentState:
     llm = ChatOllama(model="llama3.2", temperature=0)
@@ -41,6 +42,7 @@ Return only valid JSON with this shape:
 {{
     "use_rag": true,
     "use_mcp": false,
+    "destination": "naples",
     "reason": "short explanation"
 }}
 
@@ -56,6 +58,7 @@ User question:
         plan = {
             "use_rag": True,
             "use_mcp": False,
+            "destination": "",
             "reason": "Planner returned invalid JSON, so defaulting to RAG.",
         }
 
@@ -63,6 +66,7 @@ User question:
         **state,
         "use_rag": bool(plan.get("use_rag", True)),
         "use_mcp": bool(plan.get("use_mcp", False)),
+        "destination": plan.get("destination", ""),
         "plan_reason": plan.get("reason", ""),
     }
 
@@ -152,9 +156,9 @@ async def call_mcp_tool(state: AgentState) -> AgentState:
         tool for tool in tools if tool.name == "get_travel_tip"
     )
 
-    city = "naples" if "pompeii" in state["question"].lower() else "paris"
-
-    result = await get_travel_tip.ainvoke({"city": city})
+    result = await get_travel_tip.ainvoke(
+        {"city": state["destination"]}
+    )
 
     return {
         **state,
