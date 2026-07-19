@@ -37,12 +37,38 @@ from rag_mcp_agent.graph import plan_route, choose_route
                 "destination": "naples",
             },
         ),
-        # TODO: Add the Naples RAG-only case.
-        # TODO: Add the Rome MCP-only case.
+        (
+            "Use my documents for travel information for Rome.",
+            {
+                "use_rag": True,
+                "use_mcp": False,
+                "destination": "rome",
+                "reason": "This needs documents",
+            },
+            {
+                "use_rag": True,
+                "use_mcp": False,
+                "destination": "rome",
+            },
+        ),
+        (
+            "What travel tip do you have for Rome?",
+            {
+                "use_rag": False,
+                "use_mcp": True,
+                "destination": "rome",
+                "reason": "A travel tip requires an mcp tool",
+            },
+            {
+                "use_rag": False,
+                "use_mcp": True,
+                "destination": "rome"
+            },
+        )
     ],
 )
 @patch("rag_mcp_agent.graph.ChatOllama")
-def test_plan_route(
+def test_plan_route_parses_llm_decision(
     mock_chat_ollama,
     question,
     planner_output,
