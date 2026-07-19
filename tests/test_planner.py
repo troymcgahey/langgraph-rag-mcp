@@ -3,7 +3,7 @@ from unittest.mock import Mock, patch
 
 import pytest
 
-from rag_mcp_agent.graph import plan_route
+from rag_mcp_agent.graph import plan_route, choose_route
 
 
 @pytest.mark.parametrize(
@@ -80,7 +80,7 @@ def test_plan_route(
         (False, False, "rag"),
     ],
 )
-def test_choose_route(use_rag, use_mcp, expected):
+def test_choose_route(use_rag, use_mcp, expected_route):
     state = {
         "use_rag": use_rag,
         "use_mcp": use_mcp,
