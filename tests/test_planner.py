@@ -113,3 +113,30 @@ def test_choose_route(use_rag, use_mcp, expected_route):
     }
 
     assert choose_route(state) == expected_route
+
+@patch("rag_mcp_agent.graph.ChatOllama")
+def test_plan_route_defaults_to_rag_when_llm_returns_invalid_json(
+    mock_chat_ollama,
+):
+    mock_llm = Mock()
+    mock_llm.invoke.return_value.content = "This is not valid JSON"
+    mock_chat_ollama.return_value = mock_llm
+
+    state = {
+        "question": "Tell me about Naples",
+        "documents": [],
+        "mcp_result": "",
+        "answer": "",
+        "use_rag": False,
+        "use_mcp": False,
+        "route": "",
+        "plan_reason": "",
+        "destination": "",
+    }
+    
+    result = plan_route(state)
+
+    assert result["use_rag"] is  True
+    assert result["use_mcp"] is False
+    assert result["destination"] == ""
+    assert "invalid json" in result["plan_reason"].lower()
