@@ -62,10 +62,21 @@ User question:
             "reason": "Planner returned invalid JSON, so defaulting to RAG.",
         }
 
+    use_rag = bool(plan.get("use_rag", True))
+    use_mcp = bool(plan.get("use_mcp", False))
+
+    if use_rag and use_mcp:
+        route = "both"
+    elif use_mcp:
+        route = "mcp"
+    else:
+        route = "rag"
+
     return {
         **state,
-        "use_rag": bool(plan.get("use_rag", True)),
-        "use_mcp": bool(plan.get("use_mcp", False)),
+        "use_rag": use_rag,
+        "use_mcp": use_mcp,
+        "route": route,
         "destination": plan.get("destination", ""),
         "plan_reason": plan.get("reason", ""),
     }

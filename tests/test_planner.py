@@ -21,6 +21,7 @@ from rag_mcp_agent.graph import plan_route, choose_route
                 "use_rag": False,
                 "use_mcp": True,
                 "destination": "paris",
+                "route": "mcp",
             },
         ),
         (
@@ -35,6 +36,7 @@ from rag_mcp_agent.graph import plan_route, choose_route
                 "use_rag": True,
                 "use_mcp": True,
                 "destination": "naples",
+                "route": "both",
             },
         ),
         (
@@ -49,6 +51,7 @@ from rag_mcp_agent.graph import plan_route, choose_route
                 "use_rag": True,
                 "use_mcp": False,
                 "destination": "rome",
+                "route": "rag",
             },
         ),
         (
@@ -62,7 +65,8 @@ from rag_mcp_agent.graph import plan_route, choose_route
             {
                 "use_rag": False,
                 "use_mcp": True,
-                "destination": "rome"
+                "destination": "rome",
+                "route": "mcp",
             },
         )
     ],
@@ -96,6 +100,7 @@ def test_plan_route_parses_llm_decision(
     assert result["use_mcp"] is expected["use_mcp"]
     assert result["destination"] == expected["destination"]
     assert result["plan_reason"]
+    assert result["route"] == expected["route"]
 
 @pytest.mark.parametrize(
     ("use_rag", "use_mcp", "expected_route"),
@@ -140,3 +145,4 @@ def test_plan_route_defaults_to_rag_when_llm_returns_invalid_json(
     assert result["use_mcp"] is False
     assert result["destination"] == ""
     assert "invalid json" in result["plan_reason"].lower()
+    assert result["route"] == "rag"
