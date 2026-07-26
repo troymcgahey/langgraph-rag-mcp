@@ -27,3 +27,8 @@ where = ["src"]
 dev = [
     "pytest>=9.1.1",
 ]
+
+[tool.pytest.ini_options]
+markers = [
+    "integration: tests that require local services such as Ollama",
+]

@@ -8,7 +8,7 @@ def test_real_planner_routes_paris_tip_to_mcp():
         "question": "What travel tip do you have for Paris?",
         "documents": [],
         "mcp_results": "",
-        "answer:" "",
+        "answer": "",
         "use_rag": False,
         "use_mcp": False,
         "route": "",
@@ -18,8 +18,7 @@ def test_real_planner_routes_paris_tip_to_mcp():
 
     result = plan_route(state)
 
-    # TODO: Assert the following:
-    # - MCP is enabled.
-    # - The route is "mcp".
-    # - The destination is Paris, allowing for capitalization differences.
-    # - The planner provides a nonempty reason.
+    assert result["use_mcp"] is True
+    assert result["route"] == "mcp"
+    assert result["destination"].lower() == "paris"
+    assert result["plan_reason"].strip()
