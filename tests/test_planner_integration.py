@@ -7,7 +7,7 @@ def test_real_planner_routes_paris_tip_to_mcp():
     state = {
         "question": "What travel tip do you have for Paris?",
         "documents": [],
-        "mcp_results": "",
+        "mcp_result": "",
         "answer": "",
         "use_rag": False,
         "use_mcp": False,
@@ -28,7 +28,7 @@ def test_real_planner_routes_naples_to_rag():
     state = {
         "question": "Use my documents to tell me about Naples.",
         "documents": [],
-        "mcp_results": "",
+        "mcp_result": "",
         "answer": "",
         "use_rag": False,
         "use_mcp": False,
@@ -40,6 +40,7 @@ def test_real_planner_routes_naples_to_rag():
     result = plan_route(state)
 
     assert result["use_rag"] is True
+    assert result["use_mcp"] is False
     assert result["route"] == "rag"
     assert result["destination"].lower() == "naples"
     assert result["plan_reason"].strip()
@@ -49,7 +50,7 @@ def test_real_planner_routes_naples_using_rag_and_mcp():
     state = {
         "question": "Use my documents and give me a travel tip for Naples.",
         "documents": [],
-        "mcp_results": "",
+        "mcp_result": "",
         "answer": "",
         "use_rag": False,
         "use_mcp": False,
@@ -62,5 +63,6 @@ def test_real_planner_routes_naples_using_rag_and_mcp():
 
     assert result["use_rag"] is True
     assert result["use_mcp"] is True
+    assert result["route"] == "both"
     assert result["destination"].lower() == "naples"
     assert result["plan_reason"].strip()
