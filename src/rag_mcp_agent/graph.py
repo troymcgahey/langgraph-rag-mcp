@@ -42,9 +42,11 @@ Return only valid JSON with this shape:
 {{
     "use_rag": true,
     "use_mcp": false,
-    "destination": "naples",
+    "destination": "london",
     "reason": "short explanation"
 }}
+
+Do not include anything else in the response. Only a valid JSON document.
 
 User question:
 {state["question"]}
